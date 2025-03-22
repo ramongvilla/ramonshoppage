@@ -7,14 +7,22 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Inicializa Firebase Admin SDK
+const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+console.log(process.env);
+
+if (!privateKey) {
+  console.error("FIREBASE_PRIVATE_KEY no está definido");
+  process.exit(1); // Detiene la app si falta la variable
+}
+
 admin.initializeApp({
   credential: admin.credential.cert({
     projectId: process.env.FIREBASE_PROJECT_ID,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'), // Reemplaza '\\n' con '\n'
+    privateKey: privateKey.replace(/\\n/g, '\n'),
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
   }),
-  // No necesitas databaseURL si solo usas Cloud Firestore
 });
+
 
 // Access Cloud Firestore
 const db = admin.firestore();
