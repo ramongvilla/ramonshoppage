@@ -124,6 +124,28 @@ app.post('/addProducts', async (req, res) => {
   }
 });
 
+// Endpoint para obtener un producto por su ID
+app.get('/products/:id', async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const productDoc = await db.collection('products').doc(productId).get();
+
+    if (!productDoc.exists) {
+      res.status(404).send('Producto no encontrado.');
+      return;
+    }
+
+    res.json({
+      id: productDoc.id,
+      ...productDoc.data()
+    });
+  } catch (error) {
+    console.error('Error al obtener el producto:', error);
+    res.status(500).send('Error al obtener el producto.');
+  }
+});
+
+
 // Inicia el servidor
 app.listen(port, () => {
   console.log(`Servidor Express escuchando en el puerto ${port}`);
